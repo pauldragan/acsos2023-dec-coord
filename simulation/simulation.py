@@ -35,6 +35,7 @@ class Simulation:
         self.dispatcher = _create_instance(configuration["dispatcher"], ref_jobs)
         if "sa_strategy" in configuration:
             self.sa_strategy = _create_instance(configuration["sa_strategy"], ref_jobs)
+
         else:
             self.sa_strategy = None  # strategy can be empty (i.e., no MAPE-K) for baseline ref. measurements
 
@@ -61,6 +62,17 @@ class Simulation:
         """Additional metrics components may be registered via this method (mainly for debugging purposes)."""
         for m in metrics:
             self.metrics.append(m)
+
+    def set_experiment(self, exp_nr, exp_variant, exp_same_jobs, seed, exp_infra_perf):
+        # Experiment 1: Baseline 1
+        # Experiment 2: Baseline 2
+        # Experiment 3: Coordination
+        # variant: True = Preference changes, False Cost Changes
+        exp_nr = exp_nr if (1 <= exp_nr <= 3) else 3
+        try:
+            self.sa_strategy.setup_experiment(exp_nr, exp_variant, exp_same_jobs, seed, exp_infra_perf)
+        except Exception:
+            print("Not the right strategy")
 
     def __start_simulation(self, ts):
         """Just-in-time initialization."""
@@ -112,6 +124,8 @@ class Simulation:
         # first run, initialize simulation
         if self.ts == 0.0:
             self.__start_simulation(job.spawn_ts)
+            print("Current Simulation: " + str(self.sa_strategy.experiment) + " "
+                  + str(self.sa_strategy.variant))
 
         if job:
             # regular simulation step
@@ -127,3 +141,6 @@ class Simulation:
                 if worker_end_ts:
                     end_ts = max(end_ts, worker.get_finish_ts())
             self.__advance_time(end_ts + self.sa_period)
+
+            if hasattr(self.sa_strategy, "save_logs"):
+                self.sa_strategy.save_logs()

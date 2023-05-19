@@ -1,15 +1,21 @@
 from interfaces import AbstractMetricsCollector
 
+import pandas as pd
+
 
 class PowerMetricsCollector(AbstractMetricsCollector):
     """Metrics collector that computes total uptime of all workers (i.e., power consumption)."""
 
     def __init__(self):
+        self.dict_active_workers = {"ts": [], "active_workers": []}
         self.last_ts = None
         self.period = 0.0  # measured period of time
         self.uptime = 0.0  # total sum of time when servers were up
 
     def snapshot(self, ts, workers):
+        self.dict_active_workers["ts"].append(ts)
+        self.dict_active_workers["active_workers"].append(len(list(filter(lambda w: w.get_attribute("active"), workers))))
+
         if self.last_ts:
             dt = max(ts - self.last_ts, 0)
             active_workers = len(list(filter(lambda w: w.get_attribute("active"), workers)))
@@ -20,6 +26,13 @@ class PowerMetricsCollector(AbstractMetricsCollector):
     def print(self):
         print("Simulation time: {} s, relative workers uptime: {}".format(
             self.get_measured_period(), self.get_relative_uptime()))
+
+        # save the worker logs (timesteps and active workers at each)
+        worker_df = pd.DataFrame(self.dict_active_workers)
+        print("### Worker Details")
+        print(worker_df)
+
+        worker_df.to_pickle("worker_log.pkl")
 
     def get_measured_period(self):
         """Duration of the entire measurement."""

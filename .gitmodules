@@ -1,0 +1,3 @@
+[submodule "acsos2023-dec-coord-pydcop"]
+	path = acsos2023-dec-coord-pydcop
+	url = https://github.com/pauldragan/acsos2023-dec-coord-pydcop.git

@@ -25,6 +25,19 @@ class Job:
     compilation_ok: bool  # True if the solution passed compilation, False means that no test were actually executed
     duration: float  # how long the job took (according to logs)
 
+    cost_pref: float = 0
+    satisf_pref: float = 0
+    cost: float = 0
+    expected_cost: float = 0
+    expected_duration: float = 0
+    manager_name: str = ""
+    manager_real_strategy: str = ""
+    manager_selected_strategy: str = ""
+    infrastructure_strategy: str = ""
+    delayed: str = ""
+    active_workers: int = 0
+    estimate: int = -1
+
     # extra fields filled by the simulation
     start_ts: float = 0.0  # when the processing of the job actually started (simulation time)
     finish_ts: float = 0.0  # when the processing ended (start_ts + duration by default)

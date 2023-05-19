@@ -1,3 +1,66 @@
+# Instructions
+
+This repository contains the code for the experimental evaluation of
+the paper "Towards the decentralized coordination of multiple
+self-adaptive systems" by Paul-Andrei Dragan, Andreas Metzger, and
+Klaus Pohl, submitted at ACSOS2023.
+
+## Requirements
+
+The code was tested on a Linux-based operating system using a Python
+3.10.9 virtual environment.
+
+## Installation
+
+Clone the repository using the `--recurse-submodules` flag. This
+ensure that the pyDcop library is also cloned.
+
+Assuming an appropriate Python virtualenv was initialized, from the root
+folder of the repository, install Python dependencies using:
+
+```
+pip install -r requirements.txt
+
+pip install acsos2023-dec-coord-pydcop/
+```
+
+## Running the experiments
+
+From the root folder of the repository, execute:
+
+```
+bash run_acsos2023_experiments_and_plots.sh
+```
+
+This script will execute the experiments associated to RQ1 and RQ2
+from the paper. The experiments might take several hours and 20GB+ of
+data will be saved on disk.
+
+After the script has completed, the following files should had been
+generated:
+
+- `simulation/latex/Exp_Plot_pref_909090.pdf` (Figure 6 in the paper)
+- `simulation/latex/DPOP_Eval_v2.pdf` (Figure 7 in the paper)
+- `simulation/latex/DPOP_Eval_B_v2.pdf` (Figure 8 in the paper)
+- `simulation/totals_per_baseline.tex` (Table 1 in the paper)
+
+## Plotting existing results
+
+The data resulting from the experiments carried out for the paper can
+be found at:
+
+- [Results for RQ1](https://uni-duisburg-essen.sciebo.de/s/NNgpTTpxuWruymV)
+- [Results for RQ2](https://uni-duisburg-essen.sciebo.de/s/uylk29pmxXDfMTb)
+
+Please download and extract the archives in the `simulation/` folder
+using `tar -xf`.
+
+Then, in the root directory, execute:
+
+`bash run_acsos2023_experiments_plots_only.sh`
+
+The figures and tables mentioned in the previous section should then be generated.
+
 # SIMDEX: ReCodEx Backend Simulator and Dataset
 
 [![Build Status](https://github.com/smartarch/recodex-dataset/workflows/CI/badge.svg)](https://github.com/smartarch/recodex-dataset/actions)

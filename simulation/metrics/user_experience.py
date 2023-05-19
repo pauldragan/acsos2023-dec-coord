@@ -1,6 +1,8 @@
 from interfaces import AbstractMetricsCollector
 from jobs import JobDurationIndex
 
+import pandas as pd
+
 
 class UserExperienceMetricsCollector(AbstractMetricsCollector):
     """User experience metrics attempts to asses user (dis)satisfaction with job delays.
@@ -36,21 +38,29 @@ class UserExperienceMetricsCollector(AbstractMetricsCollector):
         self.jobs_delayed = 0
         self.jobs_late = 0
 
+        self.jobs = []
+
     def job_finished(self, job):
         delay = job.start_ts - job.spawn_ts
         expected_duration = self._get_expected_duration(job)
+        job.expected_duration = expected_duration
         ontime = max(expected_duration * self.threshold_ontime, 10.0)  # ontime / delayed threshold must be at least 10s
         delayed = max(expected_duration * self.threshold_delayed, 30.0)  # delayed / late threshold must be at least 30s
         if delay <= ontime:
             self.jobs_ontime += 1
+            job.delayed = "ontime"
         elif delay <= delayed:
             self.jobs_delayed += 1
+            job.delayed = "delayed"
         else:
             self.jobs_late += 1
+            job.delayed = "late"
 
         # the metrics is adjusting the expectations of the job duration dynamically
         if job.compilation_ok:
             self.duration_index.add(job)
+
+        self.jobs.append(job)
 
     def get_total_jobs(self):
         return self.jobs_ontime + self.jobs_delayed + self.jobs_late
@@ -58,3 +68,16 @@ class UserExperienceMetricsCollector(AbstractMetricsCollector):
     def print(self):
         print("Total jobs: {}, on time: {}, delayed: {}, late: {}".format(
             self.get_total_jobs(), self.jobs_ontime, self.jobs_delayed, self.jobs_late))
+        print("Percentage on time: {:.2f}%, delayed : {:.2f}%, late: {:.2f}%".format(
+            100 * (self.jobs_ontime / self.get_total_jobs()),
+            100 * (self.jobs_delayed / self.get_total_jobs()),
+            100 * (self.jobs_late / self.get_total_jobs())))
+
+        job_df = pd.DataFrame(self.jobs)
+        job_df.to_pickle("job_logs.pkl")
+
+        print("### Jobs")
+        print(job_df)
+        #print(job_df["manager_name"])
+        #print(job_df["manager_real_strategy"])
+        #print(job_df["manager_selected_strategy"])

@@ -55,7 +55,11 @@ class CategorySelfAdaptingStrategy(AbstractSelfAdaptingStrategy):
         self.layers_widths = layers_widths
         self.batch_size = batch_size
         self.batch_epochs = batch_epochs
+
         self.ref_jobs = ref_jobs[:] if ref_jobs else None
+        if self.ref_jobs is not None:
+            self.ref_jobs.reverse()
+
         self.buffer = []
         self.model = None
 
