@@ -23,6 +23,14 @@ pip install -r requirements.txt
 
 pip install acsos2023-dec-coord-pydcop/
 ```
+## Extracting Simdex dataset
+
+Before running the experiments, the dataset provided by the Simdex exemplar must be extracted:
+
+```
+cd data/release01-2021-12-29
+gzip -d data.csv.gz
+```
 
 ## Running the experiments
 
